@@ -91,21 +91,33 @@ class GRUNN(nn.Module):
         return out
 
 
-
-class CNN(nn.Module): #Convolutional Neural Network
-    def __init__(self, num_filters, kernel_size):
-        super().__init__()
-        self.conv1 = nn.Conv1d(7, num_filters, kernel_size)
+class CNN(nn.Module):
+    def __init__(self, num_channels, num_classes):
+        super(CNN, self).__init__()
+        # Set in_channels to 1 to match your input shape
+        self.conv1 = nn.Conv1d(1, num_channels, kernel_size=3, stride=1, padding=1)
+        self.pool = nn.MaxPool1d(kernel_size=2, stride=2, padding=0)
         self.relu = nn.ReLU()
-        self.pool = nn.MaxPool1d(2)
-        self.fc = nn.Linear(num_filters, 1)
+
+        # Initialize fc dynamically after calculating the flattened size
+        self.num_channels = num_channels
 
     def forward(self, x):
-        x = x.unsqueeze(1)
+        # Reshape input to [batch_size, in_channels, sequence_length]
+        x = x.unsqueeze(1)  # Add channel dimension: [batch_size, 1, sequence_length]
         x = self.pool(self.relu(self.conv1(x)))
-        x = torch.flatten(x, start_dim=1)
+
+        # Calculate flattened size dynamically
+        flattened_size = x.shape[1] * x.shape[2]
+
+        # Initialize the fc layer dynamically
+        if not hasattr(self, 'fc'):
+            self.fc = nn.Linear(flattened_size, 1)
+
+        x = torch.flatten(x, start_dim=1)  # Flatten: [batch_size, flattened_size]
         x = self.fc(x)
         return x
+
 
 class TNN(nn.Module): #Transformer Neural Network
     def __init__(self, d_model, nhead, num_layers):

@@ -50,7 +50,7 @@ print(f"Using {device} device")
 #model = models.NeuralNetwork(512).to(device)
 #model = models.LSTMNN(32, 1, 0).to(device)
 #model = models.GRUNN(32, 1, 0).to(device)
-model = models.CNN(16, 3).to(device)
+model = models.CNN(16, 4).to(device)
 #model = models.TNN(16, 2, 1).to(device)
 #model = models.ANN(16).to(device)
 
