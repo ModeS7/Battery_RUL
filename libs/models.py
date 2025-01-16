@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from torch.nn import TransformerEncoder, TransformerEncoderLayer
 
 
 # Define models
@@ -91,7 +92,7 @@ class GRUNN(nn.Module):
 
 
 
-class CNN(nn.Module):
+class CNN(nn.Module): #Convolutional Neural Network
     def __init__(self, num_filters, kernel_size):
         super().__init__()
         self.conv1 = nn.Conv1d(7, num_filters, kernel_size)
@@ -100,9 +101,42 @@ class CNN(nn.Module):
         self.fc = nn.Linear(num_filters, 1)
 
     def forward(self, x):
-        x = x.permute(0, 2, 1)  # Change shape to (batch, channels, features)
+        x = x.unsqueeze(1)
         x = self.pool(self.relu(self.conv1(x)))
         x = torch.flatten(x, start_dim=1)
         x = self.fc(x)
         return x
 
+class TNN(nn.Module): #Transformer Neural Network
+    def __init__(self, d_model, nhead, num_layers):
+        super().__init__()
+        self.embedding = nn.Linear(7, d_model)
+        encoder_layer = TransformerEncoderLayer(d_model, nhead)
+        self.transformer = TransformerEncoder(encoder_layer, num_layers)
+        self.fc = nn.Linear(d_model, 1)
+
+    def forward(self, x):
+        x = x.unsqueeze(1)
+        x = self.embedding(x)
+        x = self.transformer(x)
+        x = self.fc(x[:, -1, :])  # Use the last timestep
+        return x
+
+
+class ANN(nn.Module): #Autoencoder Neural Network
+    def __init__(self, latent_size):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(7, latent_size),
+            nn.ReLU()
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_size, 1),
+            nn.ReLU()
+        )
+
+    def forward(self, x):
+        x = x.unsqueeze(1)
+        latent = self.encoder(x)
+        reconstructed = self.decoder(latent)
+        return latent, reconstructed
