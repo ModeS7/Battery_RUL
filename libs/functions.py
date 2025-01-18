@@ -23,30 +23,30 @@ def train(dataloader, model, loss1, loss2, optimizer, epoch, device, writer):
     model.train()
     for batch in dataloader:
         X, y = batch
-        X, y = X.to(device), y.to(device)
-        # Compute prediction error
-        pred = model(X)
-        loss = 0.7 * loss1(pred.squeeze(), y) + 0.3 * loss2(pred.squeeze(), y)
-        # Backpropagation
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
+        X, y = X.to(device), y.to(device)  # Move input tensors to the device
+        pred = model(X)  # Forward pass
+        loss = 0.7 * loss1(pred.squeeze(), y) + 0.3 * loss2(pred.squeeze(), y)  # Compute loss
+        loss.backward()  # Backpropagation
+        optimizer.step()  # Update weights
+        optimizer.zero_grad()  # Reset gradients
+        writer.add_scalar('Training Loss', loss.item(), epoch)  # Log the loss
+        return loss  # Return the loss for the current epoch
 
-        # Log the loss
-        writer.add_scalar('Training Loss', loss.item(), epoch)
-        return loss
 
 def test(dataloader, model, loss1, loss2, epoch, device, writer):
     num_batches = len(dataloader)
     model.eval()
     test_loss = 0
-    with torch.no_grad():
+    with torch.no_grad():  # No gradient calculation
         for batch in dataloader:
             X, y = batch
-            X, y = X.to(device), y.to(device)
+            X, y = X.to(device), y.to(device)  # Move input tensors to the device
             pred = model(X).squeeze()
             test_loss += loss1(pred, y).item() + loss2(pred, y).item()
     test_loss /= num_batches
+    writer.add_scalar('Test Loss', test_loss, epoch)  # Log the loss
+    return test_loss
+
 
     # Log the loss
     writer.add_scalar('Test Loss', test_loss, epoch)

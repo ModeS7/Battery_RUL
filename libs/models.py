@@ -30,6 +30,7 @@ class SimpleNN(nn.Module):
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(7, h_size),
+            nn.BatchNorm1d(h_size),
             nn.ReLU(),
             nn.Linear(h_size, 1)
         )
@@ -48,14 +49,7 @@ class NN(nn.Module):
             nn.Linear(7, h_size),
             nn.BatchNorm1d(h_size),
             nn.ReLU(),
-            nn.Dropout(d_rate),
-            nn.Linear(h_size, h_size // 2),
-            nn.BatchNorm1d(h_size // 2),
-            nn.ReLU(),
-            nn.Linear(h_size // 2, h_size // 4),
-            nn.BatchNorm1d(h_size // 4),
-            nn.ReLU(),
-            nn.Linear(h_size // 4, 1)
+            nn.Linear(h_size, 1)
         )
 
     def forward(self, x):
@@ -94,27 +88,17 @@ class GRUNN(nn.Module):
 class CNN(nn.Module):
     def __init__(self, num_channels, num_classes):
         super(CNN, self).__init__()
-        # Set in_channels to 1 to match your input shape
         self.conv1 = nn.Conv1d(1, num_channels, kernel_size=3, stride=1, padding=1)
         self.pool = nn.MaxPool1d(kernel_size=2, stride=2, padding=0)
         self.relu = nn.ReLU()
 
-        # Initialize fc dynamically after calculating the flattened size
-        self.num_channels = num_channels
-
     def forward(self, x):
-        # Reshape input to [batch_size, in_channels, sequence_length]
-        x = x.unsqueeze(1)  # Add channel dimension: [batch_size, 1, sequence_length]
+        x = x.unsqueeze(1)
         x = self.pool(self.relu(self.conv1(x)))
-
-        # Calculate flattened size dynamically
         flattened_size = x.shape[1] * x.shape[2]
-
-        # Initialize the fc layer dynamically
         if not hasattr(self, 'fc'):
-            self.fc = nn.Linear(flattened_size, 1)
-
-        x = torch.flatten(x, start_dim=1)  # Flatten: [batch_size, flattened_size]
+            self.fc = nn.Linear(flattened_size, 1).to(x.device)
+        x = torch.flatten(x, start_dim=1)
         x = self.fc(x)
         return x
 
@@ -151,4 +135,4 @@ class ANN(nn.Module): #Autoencoder Neural Network
         x = x.unsqueeze(1)
         latent = self.encoder(x)
         reconstructed = self.decoder(latent)
-        return latent, reconstructed
+        return reconstructed  # Only return the reconstructed output

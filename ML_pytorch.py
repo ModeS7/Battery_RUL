@@ -30,7 +30,7 @@ test_size = len(dataset) - train_size
 train_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, test_size])
 
 # Create data loaders
-batch_size = 64
+batch_size = 128
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
@@ -44,13 +44,12 @@ device = (
 )
 print(f"Using {device} device")
 
-
-#model = models.SimpleNN(10).to(device)
-#model = models.NN(512, 0.2).to(device)
-#model = models.NeuralNetwork(512).to(device)
+model = models.SimpleNN(15).to(device)
+#model = models.NN(32, 0.2).to(device)
+#model = models.NeuralNetwork(24).to(device)
 #model = models.LSTMNN(32, 1, 0).to(device)
 #model = models.GRUNN(32, 1, 0).to(device)
-model = models.CNN(16, 4).to(device)
+#model = models.CNN(16, 4).to(device)
 #model = models.TNN(16, 2, 1).to(device)
 #model = models.ANN(16).to(device)
 
@@ -68,8 +67,8 @@ writer = SummaryWriter(f'runs/{model_name}_{current_time}')
 loss1 = nn.MSELoss()
 loss2 = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-1)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.8)
-epochs = 1500
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.9)
+epochs = 4000
 
 # Initialize early stopping
 early_stopping = functions.EarlyStopping(patience=100, min_delta=0.01)
@@ -81,7 +80,8 @@ for t in pbar:
     test_loss_MAE = functions.test(test_dataloader, model, nn.L1Loss(), nn.L1Loss(), t, device, writer)
     test_loss_MSE = functions.test(test_dataloader, model, nn.MSELoss(), nn.MSELoss(), t, device, writer)
     scheduler.step()
-    pbar.set_description(f"Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}, Test Loss MAE: {test_loss_MAE:.4f}, Test Loss MSE: {test_loss_MSE:.4f}")
+    pbar.set_description(f"Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}, "
+                         f"Test Loss MAE: {test_loss_MAE:.4f}, Test Loss MSE: {test_loss_MSE:.4f}")
 
     # Check for early stopping
     early_stopping(test_loss)
