@@ -44,13 +44,13 @@ device = (
 )
 print(f"Using {device} device")
 
-model = models.SimpleNN(15).to(device)
+#model = models.SimpleNN(10).to(device)
 #model = models.NN(32, 0.2).to(device)
 #model = models.NeuralNetwork(24).to(device)
 #model = models.LSTMNN(32, 1, 0).to(device)
 #model = models.GRUNN(32, 1, 0).to(device)
 #model = models.CNN(16, 4).to(device)
-#model = models.TNN(16, 2, 1).to(device)
+model = models.TNN(16, 2, 1).to(device)
 #model = models.ANN(16).to(device)
 
 print(model)
@@ -68,7 +68,7 @@ loss1 = nn.MSELoss()
 loss2 = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-1)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.9)
-epochs = 4000
+epochs = 1000
 
 # Initialize early stopping
 early_stopping = functions.EarlyStopping(patience=100, min_delta=0.01)
@@ -84,7 +84,7 @@ for t in pbar:
                          f"Test Loss MAE: {test_loss_MAE:.4f}, Test Loss MSE: {test_loss_MSE:.4f}")
 
     # Check for early stopping
-    early_stopping(test_loss)
+    #early_stopping(test_loss)
     if early_stopping.early_stop:
         print("Early stopping")
         break
@@ -98,6 +98,15 @@ writer.close()
 model.eval()
 X, y = next(iter(test_dataloader))
 X, y = X.to(device), y.to(device)
+# Move tensors to CPU before converting to DataFrame
+y_cpu = y.cpu().numpy()
+y_pred_cpu = y.cpu().numpy()
+
+# Create a DataFrame with the real and predicted values
+results_df = pd.DataFrame({'Real': y_cpu, 'Predicted': y_pred_cpu})
+
+# Save the DataFrame to a CSV file
+results_df.to_csv('data/predictions/TNN(16, 2, 1).csv', index=False)
 with torch.no_grad():
     pred = model(X)
     predicted, actual = pred[0], y[0]

@@ -80,7 +80,7 @@ class GRUNN(nn.Module):
 
     def forward(self, x):
         x = x.unsqueeze(1)
-        out, _ = self.lstm(x)
+        out, _ = self.GRU(x)
         out = self.fc(out[:, -1, :])  # Take the output at the last timestep
         return out
 
