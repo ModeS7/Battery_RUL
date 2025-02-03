@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUL Estimator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+        <h1>RUL Estimator</h1>
+    </header>
+    <div class="container">
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            {% for i in range(1, 8) %}
+                <label for="F{{ i }}">F{{ i }}:</label>
+                <input type="text" id="F{{ i }}" name="F{{ i }}">
+            {% endfor %}
+            <label for="csv_line">Enter CSV line for quick testing:</label>
+            <textarea id="csv_line" name="csv_line" rows="2" placeholder="18.0,2259.46,883.1990000000224,4.042,3.373,5181.377000000095,6161.38,9310.98,1095"></textarea>
+            <input type="submit" value="Get RUL Estimate">
+        </form>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <img src="{{ url_for('static', filename='graph.png') }}" alt="Graph">
+    </div>
+</body>
+</html>

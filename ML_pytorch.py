@@ -44,13 +44,13 @@ device = (
 )
 print(f"Using {device} device")
 
-#model = models.SimpleNN(10).to(device)
+model = models.SimpleNN(10).to(device)
 #model = models.NN(32, 0.2).to(device)
 #model = models.NeuralNetwork(24).to(device)
 #model = models.LSTMNN(32, 1, 0).to(device)
 #model = models.GRUNN(32, 1, 0).to(device)
 #model = models.CNN(16, 4).to(device)
-model = models.TNN(16, 2, 1).to(device)
+#model = models.TNN(16, 2, 1).to(device)
 #model = models.ANN(16).to(device)
 
 print(model)
@@ -106,7 +106,7 @@ y_pred_cpu = y.cpu().numpy()
 results_df = pd.DataFrame({'Real': y_cpu, 'Predicted': y_pred_cpu})
 
 # Save the DataFrame to a CSV file
-results_df.to_csv('data/predictions/TNN(16, 2, 1).csv', index=False)
+results_df.to_csv('data/predictions/SimpleNN(10).csv', index=False)
 with torch.no_grad():
     pred = model(X)
     predicted, actual = pred[0], y[0]
