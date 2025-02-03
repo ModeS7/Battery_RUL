@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RUL Estimator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .graph-image {
+            display: none;
+            width: 100%;
+            height: auto;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -13,18 +21,44 @@
     </header>
     <div class="container">
         <form action="/predict" method="post" enctype="multipart/form-data">
-            {% for i in range(1, 8) %}
-                <label for="F{{ i }}">F{{ i }}:</label>
-                <input type="text" id="F{{ i }}" name="F{{ i }}">
-            {% endfor %}
+            <label for="F1">F1: Discharge Time (s)</label>
+            <input type="text" id="F1" name="F1">
+            <label for="F2">F2: Time at 4.15V (s)</label>
+            <input type="text" id="F2" name="F2">
+            <label for="F3">F3: Time Constant Current (s)</label>
+            <input type="text" id="F3" name="F3">
+            <label for="F4">F4: Decrement 3.6-3.4V (s)</label>
+            <input type="text" id="F4" name="F4">
+            <label for="F5">F5: Max. Voltage Discharge (V)</label>
+            <input type="text" id="F5" name="F5">
+            <label for="F6">F6: Min. Voltage Charge (V)</label>
+            <input type="text" id="F6" name="F6">
+            <label for="F7">F7: Charging Time (s)</label>
+            <input type="text" id="F7" name="F7">
             <label for="csv_line">Enter CSV line for quick testing:</label>
-            <textarea id="csv_line" name="csv_line" rows="2" placeholder="18.0,2259.46,883.1990000000224,4.042,3.373,5181.377000000095,6161.38,9310.98,1095"></textarea>
+            <textarea id="csv_line" name="csv_line" rows="2"></textarea>
             <input type="submit" value="Get RUL Estimate">
         </form>
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-        <img src="{{ url_for('static', filename='graph.png') }}" alt="Graph">
+        <img src="{{ url_for('static', filename='graph1.png') }}" alt="Graph 1" class="graph-image" id="graph1">
+        <img src="{{ url_for('static', filename='graph2.png') }}" alt="Graph 2" class="graph-image" id="graph2">
+        <img src="{{ url_for('static', filename='graph3.png') }}" alt="Graph 3" class="graph-image" id="graph3">
+        <img src="{{ url_for('static', filename='graph4.png') }}" alt="Graph 4" class="graph-image" id="graph4">
+        <img src="{{ url_for('static', filename='graph5.png') }}" alt="Graph 5" class="graph-image" id="graph5">
+        <img src="{{ url_for('static', filename='graph6.png') }}" alt="Graph 6" class="graph-image" id="graph6">
+        <img src="{{ url_for('static', filename='graph7.png') }}" alt="Graph 7" class="graph-image" id="graph7">
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('form input[type="text"]');
+            const images = document.querySelectorAll('.graph-image');
+
+            inputs.forEach((input, index) => {
+                input.addEventListener('focus', () => {
+                    images.forEach(img => img.style.display = 'none');
+                    document.getElementById(`graph${index + 1}`).style.display = 'block';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -3,17 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUL Estimate</title>
+    <title>RUL Estimate Result</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .container {
+            padding: 5vw;
+            margin: 0;
+        }
+        .rul-result {
+            font-size: 22vw; /* Increase the font size using viewport width units */
+            font-weight: bold;
+            padding: 0.1vw 0; /* Further reduce padding to minimize free space */
+            margin: 0; /* Remove margin */
+        }
+        .color-scale {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            position: relative;
+        }
+        .color-scale .scale {
+            width: 80vw; /* Use viewport width units to scale with browser size */
+            height: 5vw; /* Use viewport width units to scale with browser size */
+            background: linear-gradient(to right, rgb(255, 0, 0), rgb(255, 255, 0), rgb(0, 255, 0));
+            margin-right: 10px;
+        }
+        .color-scale .start,
+        .color-scale .end {
+            font-size: 5vw; /* Increase font size */
+            position: absolute;
+            top: 6vw; /* Position below the scale */
+        }
+        .color-scale .start {
+            left: 0;
+        }
+        .color-scale .end {
+            right: 0;
+        }
+        .back-to-home {
+            display: inline-block;
+            font-size: 5vw; /* Use viewport width units to scale with browser size */
+            padding: 1vw 2vw; /* Use viewport width units to scale with browser size */
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 5px;
+            margin-top: 7vw; /* Increase margin-top to add more separation */
+        }
+    </style>
 </head>
 <body>
     <header>
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
-        <h1>RUL Estimate</h1>
+        <h1>RUL Estimate Result</h1>
     </header>
     <div class="container">
-        <p>The estimated Remaining Useful Life (RUL) is: <strong>{{ rul }}</strong></p>
-        <a href="/">Go back</a>
+        <p class="rul-result" id="rul-result">{{ rul }}</p>
+        <div class="color-scale">
+            <div class="scale"></div>
+            <span class="start">0</span>
+            <span class="end">1000+</span>
+        </div>
+        <a href="{{ url_for('index') }}" class="back-to-home">Back to Home</a>
     </div>
+    <script>
+        function getColorForRUL(rul) {
+            let red, green;
+            if (rul <= 500) {
+                red = 255;
+                green = Math.floor((rul / 500) * 255);
+            } else {
+                green = 255;
+                red = Math.floor(((1000 - rul) / 500) * 255);
+            }
+            return `rgb(${red}, ${green}, 0)`;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const rulElement = document.getElementById('rul-result');
+            const rulValue = parseFloat(rulElement.textContent);
+            rulElement.style.color = getColorForRUL(rulValue);
+        });
+    </script>
 </body>
 </html>

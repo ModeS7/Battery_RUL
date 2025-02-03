@@ -33,9 +33,8 @@ def predict():
                 data = pd.read_csv(csv_file)
                 # Ensure the CSV has the correct columns
                 required_columns = [
-                    'Cycle_Index', 'Discharge Time (s)', 'Decrement 3.6-3.4V (s)',
-                    'Max. Voltage Dischar. (V)', 'Min. Voltage Charg. (V)',
-                    'Time at 4.15V (s)', 'Time constant current (s)',
+                    'Discharge Time (s)', 'Decrement 3.6-3.4V (s)', 'Max. Voltage Dischar. (V)',
+                    'Min. Voltage Charg. (V)', 'Time at 4.15V (s)', 'Time constant current (s)',
                     'Charging time (s)', 'RUL'
                 ]
                 if all(column in data.columns for column in required_columns):
@@ -54,24 +53,24 @@ def predict():
             try:
                 # Convert the CSV line to a numpy array
                 inputs = np.array([float(x) for x in csv_line.split(',')])
-                if inputs.shape[0] != 9:
+                if inputs.shape[0] != 8:
                     raise ValueError("CSV line does not have the required number of values.")
-                inputs = inputs[1:-1].reshape(1, -1)  # Exclude the Cycle_Index and RUL values
+                inputs = inputs[:-1].reshape(1, -1)  # Exclude the RUL value
                 # Predict RUL
                 rul = model.predict(inputs)[0]
                 # Display the RUL estimate
                 return render_template('result.html', rul=rul)
             except ValueError:
-                return render_template('index.html', error="Please enter a valid CSV line with 9 numerical values.")
+                return render_template('index.html', error="Please enter a valid CSV line with 8 numerical values.")
 
         # Collect input values from the form
         inputs = [
             float(request.form['F1']),  # Discharge Time (s)
-            float(request.form['F2']),  # Time at 4.15V (s)
-            float(request.form['F3']),  # Time Constant Current (s)
-            float(request.form['F4']),  # Decrement 3.6-3.4V (s)
-            float(request.form['F5']),  # Max. Voltage Discharge (V)
-            float(request.form['F6']),  # Min. Voltage Charge (V)
+            float(request.form['F2']),  # Decrement 3.6-3.4V (s)
+            float(request.form['F3']),  # Max. Voltage Discharge (V)
+            float(request.form['F4']),  # Min. Voltage Charge (V)
+            float(request.form['F5']),  # Time at 4.15V (s)
+            float(request.form['F6']),  # Time constant current (s)
             float(request.form['F7'])   # Charging Time (s)
         ]
         inputs = np.array(inputs).reshape(1, -1)

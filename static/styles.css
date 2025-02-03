@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #ababab;
     margin: 0;
     padding: 0;
 }
@@ -14,57 +14,62 @@ body {
 header {
     background: #333;
     color: #fff;
-    padding-top: 30px;
-    min-height: 70px;
-    border-bottom: #77aaff 3px solid;
+    min-height: 10vw;
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
 }
 
 header h1 {
     text-align: center;
     margin: 0;
-    font-size: 24px;
+    font-size: 5vw;
 }
 
 form {
     background: #fff;
-    padding: 20px;
-    margin-top: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1vw;
+    margin-top: 1vw;
+    border-radius: 1vw;
+    box-shadow: 0 0 2vw rgba(0, 0, 0, 0.1);
 }
 
 form label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 0.5vw;
+    font-size: 2.5vw; /* Increase font size */
 }
 
 form input[type="text"],
 form input[type="file"],
 form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    width: 80%;
+    padding: 1vw; /* Increase padding to make the textarea larger */
+    margin-bottom: 0.5vw;
+    border: 0.1vw solid #ccc;
+    border-radius: 0.2vw;
+    font-size: 1.5vw; /* Increase font size */
 }
 
 form input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    width: 80%;
+    padding: 1vw; /* Increase padding to make the input fields larger */
+    margin-bottom: 0.5vw;
+    border: 0.1vw solid #ccc;
+    border-radius: 0.2vw;
+    font-size: 1.5vw; /* Increase font size */
 }
 
 form input[type="submit"] {
     display: block;
-    width: 100%;
+    width: 50%; /* Increase width to 100% */
     background: #333;
     color: #fff;
     border: 0;
-    padding: 10px;
+    padding: 1vw; /* Increase padding */
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 0.2vw;
+    font-size: 3vw; /* Increase font size */
 }
 
 form input[type="submit"]:hover {
@@ -81,12 +86,14 @@ img {
 .error {
     color: red;
     text-align: center;
+    font-size: 3vw; /* Increase font size */
 }
 
 .logo {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    max-width: 250px;
+    left: 1vw;
+    width: 20vw;
     height: auto;
+    align-items: center; /* Center vertically */
+    filter: brightness(0) invert(1); /* Change the color to white */
 }
